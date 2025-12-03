@@ -1,0 +1,148 @@
+.search-container {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.controls {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-group label {
+  font-weight: 500;
+}
+
+.control-group input[type="number"],
+.control-group select {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.control-group input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.btn-generate {
+  padding: 8px 16px;
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-generate:hover {
+  background-color: #0052a3;
+}
+
+.grid-info {
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+.grid-wrapper {
+  display: flex;
+  justify-content: center;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 4px;
+  background-color: #fafafa;
+}
+
+.grid {
+  display: grid;
+  gap: 1px;
+  background-color: #ccc;
+  padding: 1px;
+  border: 2px solid #333;
+}
+
+.cell {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+
+.cell-empty {
+  background-color: white;
+}
+
+.cell-start {
+  background-color: #4caf50;
+  color: white;
+  font-weight: bold;
+}
+
+.cell-end {
+  background-color: #f44336;
+  color: white;
+  font-weight: bold;
+}
+
+.cell-obstacle {
+  background-color: #333;
+}
+
+.placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+
+
+.btn-search {
+  padding: 8px 16px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-search:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+.btn-search:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.btn-generate:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.cell-visited {
+  background-color: #fff59d;
+  border: 1px solid #f57f17;
+}
+
+.cell-path {
+  background-color: #81c784;
+  border: 1px solid #388e3c;
+}

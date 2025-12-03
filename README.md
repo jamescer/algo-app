@@ -1,68 +1,145 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Algorithm Visualizer
 
-## Available Scripts
+An interactive web application for visualizing sorting and searching algorithms in real-time. Built with React, this educational tool helps users understand how different algorithms work through dynamic animations and step-by-step visualizations.
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+### 🔍 Search Algorithms
+- **Breadth-First Search (BFS)** - Explores paths level by level
+- **Depth-First Search (DFS)** - Explores paths as far as possible before backtracking
+- Customizable grid size (5-50)
+- Toggle obstacles on/off
+- Real-time path visualization with color coding:
+  - 🟢 Green: Start point
+  - 🔴 Red: End point
+  - 🟡 Yellow: Visited cells
+  - 🟩 Light Green: Final path
+  - ⬛ Black: Obstacles
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### 📊 Sorting Algorithms
+- **Quick Sort** - Divide-and-conquer with O(n log n) average complexity
+- **Merge Sort** - Consistent O(n log n) performance
+- **Insertion Sort** - Efficient for small datasets
+- **Selection Sort** - Simple but slower O(n²) approach
+- Customizable array size (10-200)
+- Adjustable value range
+- Live statistics (comparisons and swaps)
+- Real-time bar visualization with color feedback:
+  - 🔵 Blue: Default/unsorted
+  - 🟠 Orange: Currently comparing
+  - 🔴 Red: Recently swapped
+  - 🟢 Green: Sorted elements
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+### 🏠 Home Page
+- Beautiful gradient UI with modern navigation cards
+- SVG visualizations for each algorithm category
+- Quick access to all features
+- Responsive design for all screen sizes
 
-### `npm test`
+## Tech Stack
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Frontend**: React 19.2.0
+- **Routing**: React Router DOM 7.10.0
+- **Styling**: CSS3 with animations
+- **Testing**: Jest & React Testing Library
 
-### `npm run build`
+## How to Run
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+### Installation
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+# Clone the repository
+git clone <repository-url>
+cd alg-app
 
-### `npm run eject`
+# Install dependencies
+npm install
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Development Mode
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm start
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Runs the app in development mode. Open [http://localhost:3000](http://localhost:3000) to view it in your browser. The page reloads automatically when you make changes.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Build for Production
 
-## Learn More
+```bash
+npm run build
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Builds the app for production to the `build` folder.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Run Tests
 
-### Code Splitting
+```bash
+npm test
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+Launches the test runner in interactive watch mode.
 
-### Analyzing the Bundle Size
+## Project Structure
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+```
+src/
+├── components/
+│   ├── Header/              # Navigation header
+│   ├── Home.js              # Home page with navigation cards
+│   ├── Search/              # Search algorithm visualizer
+│   ├── Sort/                # Sort algorithm visualizer
+│   └── Footer/              # Footer component
+├── App.js                   # Main app with routing
+├── App.css                  # Global styles
+└── index.js                 # React entry point
+```
 
-### Making a Progressive Web App
+## How to Use
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+1. **Home Page**: Click on either "Search Algorithms" or "Sorting Algorithms" card
+2. **Search Page**: 
+   - Set grid size and toggle obstacles
+   - Click "Generate Grid" to create random start/end points
+   - Select BFS or DFS from dropdown
+   - Click "Start Search" to visualize the algorithm
+3. **Sort Page**:
+   - Set array size and value range
+   - Click "Generate Array" to create random numbers
+   - Select a sorting algorithm
+   - Click "Start Sort" to watch the visualization
 
-### Advanced Configuration
+## Performance Tips
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+- For larger arrays (150+), use Quick Sort or Merge Sort for faster execution
+- Use smaller grids for Search (10-20) to see finer detail in pathfinding
+- Each visualization updates at controlled intervals for optimal performance
 
-### Deployment
+## Learning Resources
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+This visualizer is perfect for:
+- Computer Science students learning algorithm fundamentals
+- Interview preparation
+- Understanding algorithm complexity
+- Comparing algorithm efficiency visually
 
-### `npm run build` fails to minify
+## Future Enhancements
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+- [ ] Additional sorting algorithms (Heap Sort, Bubble Sort)
+- [ ] Advanced search algorithms (A*, Dijkstra)
+- [ ] Step-by-step replay functionality
+- [ ] Speed adjustment slider
+- [ ] Algorithm complexity analysis panel
+- [ ] Code snippet display
+
+## License
+
+This project is open source and available under the MIT License.
+
+## Contributing
+
+Contributions are welcome! Feel free to submit pull requests or issues.
