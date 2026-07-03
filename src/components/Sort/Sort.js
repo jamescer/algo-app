@@ -199,6 +199,103 @@ const SortComponent = () => {
     setIsSorting(false);
   };
 
+  const heapSort = async () => {
+    setIsSorting(true);
+    let comparisons = 0;
+    let swaps = 0;
+    const arr = [...array];
+    const n = arr.length;
+
+    const heapify = async (size, rootIndex) => {
+      let largest = rootIndex;
+      const left = 2 * rootIndex + 1;
+      const right = 2 * rootIndex + 2;
+
+      if (left < size) {
+        comparisons++;
+        setComparingIndices(new Set([largest, left]));
+        setStats({ comparisons, swaps });
+        await sleep(15);
+        if (arr[left] > arr[largest]) largest = left;
+      }
+
+      if (right < size) {
+        comparisons++;
+        setComparingIndices(new Set([largest, right]));
+        setStats({ comparisons, swaps });
+        await sleep(15);
+        if (arr[right] > arr[largest]) largest = right;
+      }
+
+      if (largest !== rootIndex) {
+        [arr[rootIndex], arr[largest]] = [arr[largest], arr[rootIndex]];
+        swaps++;
+        setArray([...arr]);
+        setSwappedIndices(new Set([rootIndex, largest]));
+        setStats({ comparisons, swaps });
+        await sleep(15);
+        await heapify(size, largest);
+      }
+    };
+
+    for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+      await heapify(n, i);
+    }
+
+    for (let i = n - 1; i > 0; i--) {
+      [arr[0], arr[i]] = [arr[i], arr[0]];
+      swaps++;
+      setArray([...arr]);
+      setSwappedIndices(new Set([0, i]));
+      setStats({ comparisons, swaps });
+      await sleep(15);
+      setSortedIndices((prev) => new Set([...prev, i]));
+      await heapify(i, 0);
+    }
+
+    setSortedIndices(new Set([...Array(n).keys()]));
+    setComparingIndices(new Set());
+    setSwappedIndices(new Set());
+    setIsSorting(false);
+  };
+
+  const bubbleSort = async () => {
+    setIsSorting(true);
+    let comparisons = 0;
+    let swaps = 0;
+    const arr = [...array];
+    const n = arr.length;
+
+    for (let i = 0; i < n - 1; i++) {
+      let swappedThisPass = false;
+
+      for (let j = 0; j < n - i - 1; j++) {
+        comparisons++;
+        setComparingIndices(new Set([j, j + 1]));
+        setStats({ comparisons, swaps });
+        await sleep(9);
+
+        if (arr[j] > arr[j + 1]) {
+          [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+          swaps++;
+          setArray([...arr]);
+          setSwappedIndices(new Set([j, j + 1]));
+          setStats({ comparisons, swaps });
+          await sleep(9);
+          swappedThisPass = true;
+        }
+      }
+
+      setSortedIndices((prev) => new Set([...prev, n - 1 - i]));
+      if (!swappedThisPass) break;
+    }
+
+    setSortedIndices(new Set([...Array(n).keys()]));
+    setComparingIndices(new Set());
+    setSwappedIndices(new Set());
+    setIsSorting(false);
+  };
+
   const selectionSort = async () => {
     setIsSorting(true);
     let comparisons = 0;
@@ -251,6 +348,10 @@ const SortComponent = () => {
       insertionSort();
     } else if (sortType === 'selectionsort') {
       selectionSort();
+    } else if (sortType === 'heapsort') {
+      heapSort();
+    } else if (sortType === 'bubblesort') {
+      bubbleSort();
     }
   };
 
@@ -313,6 +414,8 @@ const SortComponent = () => {
             <option value="mergesort">Merge Sort</option>
             <option value="insertionsort">Insertion Sort</option>
             <option value="selectionsort">Selection Sort</option>
+            <option value="heapsort">Heap Sort</option>
+            <option value="bubblesort">Bubble Sort</option>
           </select>
         </div>
 

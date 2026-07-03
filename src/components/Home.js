@@ -119,6 +119,7 @@ const HomeComponent = () => {
             <ul className="feature-list">
               <li>Breadth-First Search (BFS)</li>
               <li>Depth-First Search (DFS)</li>
+              <li>Linear, Binary & Exponential Search</li>
               <li>Custom grid size & obstacles</li>
             </ul>
           </div>
@@ -150,6 +151,7 @@ const HomeComponent = () => {
               <li>Quick Sort</li>
               <li>Merge Sort</li>
               <li>Insertion & Selection Sort</li>
+              <li>Heap Sort & Bubble Sort</li>
             </ul>
           </div>
           <div className="nav-card-arrow">→</div>

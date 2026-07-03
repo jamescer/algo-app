@@ -12,6 +12,8 @@ import './Search.css';
  * @returns
  */
 
+const ARRAY_SEARCH_TYPES = new Set(['linear', 'binary', 'exponential']);
+
 const SearchComponent = () => {
   const [gridSize, setGridSize] = useState(20);
   const [searchType, setSearchType] = useState('bfs');
@@ -22,6 +24,19 @@ const SearchComponent = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [visitedCells, setVisitedCells] = useState(new Set());
   const [pathCells, setPathCells] = useState(new Set());
+
+  const [arraySize, setArraySize] = useState(30);
+  const [searchArray, setSearchArray] = useState([]);
+  const [target, setTarget] = useState('');
+  const [checkingIndices, setCheckingIndices] = useState(new Set());
+  const [eliminatedIndices, setEliminatedIndices] = useState(new Set());
+  const [foundIndex, setFoundIndex] = useState(null);
+  const [notFound, setNotFound] = useState(false);
+  const [searchStats, setSearchStats] = useState({ comparisons: 0 });
+
+  const isArrayMode = ARRAY_SEARCH_TYPES.has(searchType);
+
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const generateGrid = () => {
     const newGrid = Array(gridSize)
@@ -71,6 +86,24 @@ const SearchComponent = () => {
     setGrid(newGrid);
     setVisitedCells(new Set());
     setPathCells(new Set());
+  };
+
+  const generateSearchArray = () => {
+    const newArray = [];
+    for (let i = 0; i < arraySize; i++) {
+      newArray.push(Math.floor(Math.random() * 200));
+    }
+    newArray.sort((a, b) => a - b);
+
+    const randomTarget = newArray[Math.floor(Math.random() * newArray.length)];
+
+    setSearchArray(newArray);
+    setTarget(randomTarget);
+    setCheckingIndices(new Set());
+    setEliminatedIndices(new Set());
+    setFoundIndex(null);
+    setNotFound(false);
+    setSearchStats({ comparisons: 0 });
   };
 
   const performBFS = async () => {
@@ -190,7 +223,153 @@ const SearchComponent = () => {
     setIsSearching(false);
   };
 
+  const performLinearSearch = async () => {
+    setIsSearching(true);
+    setFoundIndex(null);
+    setNotFound(false);
+    setEliminatedIndices(new Set());
+    let comparisons = 0;
+
+    for (let i = 0; i < searchArray.length; i++) {
+      comparisons++;
+      setCheckingIndices(new Set([i]));
+      setSearchStats({ comparisons });
+      await sleep(40);
+
+      if (searchArray[i] === Number(target)) {
+        setFoundIndex(i);
+        setCheckingIndices(new Set());
+        setIsSearching(false);
+        return;
+      }
+    }
+
+    setNotFound(true);
+    setCheckingIndices(new Set());
+    setIsSearching(false);
+  };
+
+  const performBinarySearch = async () => {
+    setIsSearching(true);
+    setFoundIndex(null);
+    setNotFound(false);
+    let comparisons = 0;
+    let low = 0;
+    let high = searchArray.length - 1;
+
+    while (low <= high) {
+      const eliminated = new Set();
+      for (let k = 0; k < low; k++) eliminated.add(k);
+      for (let k = high + 1; k < searchArray.length; k++) eliminated.add(k);
+      setEliminatedIndices(eliminated);
+
+      const mid = Math.floor((low + high) / 2);
+      comparisons++;
+      setCheckingIndices(new Set([mid]));
+      setSearchStats({ comparisons });
+      await sleep(400);
+
+      if (searchArray[mid] === Number(target)) {
+        setFoundIndex(mid);
+        setCheckingIndices(new Set());
+        setIsSearching(false);
+        return;
+      } else if (searchArray[mid] < Number(target)) {
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
+    }
+
+    setNotFound(true);
+    setCheckingIndices(new Set());
+    setIsSearching(false);
+  };
+
+  const performExponentialSearch = async () => {
+    setIsSearching(true);
+    setFoundIndex(null);
+    setNotFound(false);
+    setEliminatedIndices(new Set());
+    let comparisons = 0;
+    const n = searchArray.length;
+    const targetNum = Number(target);
+
+    if (n === 0) {
+      setIsSearching(false);
+      return;
+    }
+
+    comparisons++;
+    setCheckingIndices(new Set([0]));
+    setSearchStats({ comparisons });
+    await sleep(400);
+
+    if (searchArray[0] === targetNum) {
+      setFoundIndex(0);
+      setCheckingIndices(new Set());
+      setIsSearching(false);
+      return;
+    }
+
+    let bound = 1;
+    while (bound < n && searchArray[bound] < targetNum) {
+      comparisons++;
+      setCheckingIndices(new Set([bound]));
+      setSearchStats({ comparisons });
+      await sleep(300);
+      bound *= 2;
+    }
+
+    let low = Math.floor(bound / 2);
+    let high = Math.min(bound, n - 1);
+
+    while (low <= high) {
+      const eliminated = new Set();
+      for (let k = 0; k < low; k++) eliminated.add(k);
+      for (let k = high + 1; k < n; k++) eliminated.add(k);
+      setEliminatedIndices(eliminated);
+
+      const mid = Math.floor((low + high) / 2);
+      comparisons++;
+      setCheckingIndices(new Set([mid]));
+      setSearchStats({ comparisons });
+      await sleep(400);
+
+      if (searchArray[mid] === targetNum) {
+        setFoundIndex(mid);
+        setCheckingIndices(new Set());
+        setIsSearching(false);
+        return;
+      } else if (searchArray[mid] < targetNum) {
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
+    }
+
+    setNotFound(true);
+    setCheckingIndices(new Set());
+    setIsSearching(false);
+  };
+
   const runSearch = () => {
+    if (isArrayMode) {
+      if (searchArray.length === 0 || target === '') {
+        alert('Please generate an array first!');
+        return;
+      }
+
+      if (searchType === 'linear') {
+        performLinearSearch();
+      } else if (searchType === 'binary') {
+        performBinarySearch();
+      } else if (searchType === 'exponential') {
+        performExponentialSearch();
+      }
+      return;
+    }
+
     if (!startPoint || !endPoint || grid.length === 0) {
       alert('Please generate a grid first!');
       return;
@@ -200,12 +379,6 @@ const SearchComponent = () => {
       performBFS();
     } else if (searchType === 'dfs') {
       performDFS();
-    } else if (searchType === 'binary') {
-      alert('Binary Search is not applicable to grid pathfinding.');
-    } else if (searchType === 'linear') {
-      alert('Linear Search is not applicable to grid pathfinding.');
-    } else if (searchType === 'exponential') {
-      alert('Exponential Search is not applicable to grid pathfinding.');
     }
   };
 
@@ -219,24 +392,18 @@ const SearchComponent = () => {
     return 'cell cell-empty';
   };
 
+  const getArrayCellClass = (index) => {
+    if (foundIndex === index) return 'array-cell array-cell-found';
+    if (checkingIndices.has(index)) return 'array-cell array-cell-checking';
+    if (eliminatedIndices.has(index)) return 'array-cell array-cell-eliminated';
+    return 'array-cell array-cell-default';
+  };
+
   return (
     <div className="search-container">
       <h1>Search Component</h1>
 
       <div className="controls">
-        <div className="control-group">
-          <label htmlFor="grid-size">Grid Size:</label>
-          <input
-            id="grid-size"
-            type="number"
-            min="5"
-            max="50"
-            value={gridSize}
-            onChange={(e) => setGridSize(Number(e.target.value))}
-            disabled={isSearching}
-          />
-        </div>
-
         <div className="control-group">
           <label htmlFor="search-type">Search Type:</label>
           <select
@@ -247,71 +414,166 @@ const SearchComponent = () => {
           >
             <option value="bfs">Breadth-First Search (BFS)</option>
             <option value="dfs">Depth-First Search (DFS)</option>
+            <option value="linear">Linear Search</option>
+            <option value="binary">Binary Search</option>
+            <option value="exponential">Exponential Search</option>
           </select>
         </div>
 
-        <div className="control-group">
-          <label htmlFor="obstacles">
-            <input
-              id="obstacles"
-              type="checkbox"
-              checked={hasObstacles}
-              onChange={(e) => setHasObstacles(e.target.checked)}
-              disabled={isSearching}
-            />
-            Add Obstacles
-          </label>
-        </div>
+        {isArrayMode ? (
+          <>
+            <div className="control-group">
+              <label htmlFor="array-size">Array Size:</label>
+              <input
+                id="array-size"
+                type="number"
+                min="5"
+                max="100"
+                value={arraySize}
+                onChange={(e) => setArraySize(Number(e.target.value))}
+                disabled={isSearching}
+              />
+            </div>
 
-        <button
-          onClick={generateGrid}
-          className="btn-generate"
-          disabled={isSearching}
-        >
-          Generate Grid
-        </button>
+            <div className="control-group">
+              <label htmlFor="target-value">Target:</label>
+              <input
+                id="target-value"
+                type="number"
+                value={target}
+                onChange={(e) => setTarget(e.target.value)}
+                disabled={isSearching}
+              />
+            </div>
+
+            <button
+              onClick={generateSearchArray}
+              className="btn-generate"
+              disabled={isSearching}
+            >
+              Generate Array
+            </button>
+          </>
+        ) : (
+          <>
+            <div className="control-group">
+              <label htmlFor="grid-size">Grid Size:</label>
+              <input
+                id="grid-size"
+                type="number"
+                min="5"
+                max="50"
+                value={gridSize}
+                onChange={(e) => setGridSize(Number(e.target.value))}
+                disabled={isSearching}
+              />
+            </div>
+
+            <div className="control-group">
+              <label htmlFor="obstacles">
+                <input
+                  id="obstacles"
+                  type="checkbox"
+                  checked={hasObstacles}
+                  onChange={(e) => setHasObstacles(e.target.checked)}
+                  disabled={isSearching}
+                />
+                Add Obstacles
+              </label>
+            </div>
+
+            <button
+              onClick={generateGrid}
+              className="btn-generate"
+              disabled={isSearching}
+            >
+              Generate Grid
+            </button>
+          </>
+        )}
 
         <button
           onClick={runSearch}
           className="btn-search"
-          disabled={isSearching || grid.length === 0}
+          disabled={
+            isSearching ||
+            (isArrayMode ? searchArray.length === 0 : grid.length === 0)
+          }
         >
           {isSearching ? 'Searching...' : 'Start Search'}
         </button>
       </div>
 
-      {grid.length > 0 && (
-        <div className="grid-info">
-          <p>Search Type: {searchType.toUpperCase()}</p>
-          <p>
-            Grid Size: {gridSize}x{gridSize}
-          </p>
-          <p>
-            Visited: {visitedCells.size} | Path: {pathCells.size}
-          </p>
-        </div>
-      )}
+      {isArrayMode ? (
+        <>
+          {searchArray.length > 0 && (
+            <div className="grid-info">
+              <p>Search Type: {searchType.toUpperCase()}</p>
+              <p>Array Size: {arraySize} (sorted)</p>
+              <p>
+                Target: {target} | Comparisons: {searchStats.comparisons}
+              </p>
+              {foundIndex !== null && (
+                <p>Found at index {foundIndex}!</p>
+              )}
+              {notFound && <p>Target not found in array.</p>}
+            </div>
+          )}
 
-      <div className="grid-wrapper">
-        {grid.length > 0 ? (
-          <div
-            className="grid"
-            style={{ gridTemplateColumns: `repeat(${gridSize}, 1fr)` }}
-          >
-            {grid.map((row, rowIndex) =>
-              row.map((cell, colIndex) => (
-                <div
-                  key={`${rowIndex}-${colIndex}`}
-                  className={getCellClass(cell, rowIndex, colIndex)}
-                  title={`(${rowIndex}, ${colIndex})`}
-                />
-              ))
+          <div className="array-wrapper">
+            {searchArray.length > 0 ? (
+              <div className="array-container">
+                {searchArray.map((value, index) => (
+                  <div
+                    key={index}
+                    className={getArrayCellClass(index)}
+                    title={`index ${index}`}
+                  >
+                    {value}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="placeholder">Click "Generate Array" to start</p>
             )}
           </div>
-        ) : (
-          <p className="placeholder">Click "Generate Grid" to start</p>
-        )}
-      </div>
+        </>
+      ) : (
+        <>
+          {grid.length > 0 && (
+            <div className="grid-info">
+              <p>Search Type: {searchType.toUpperCase()}</p>
+              <p>
+                Grid Size: {gridSize}x{gridSize}
+              </p>
+              <p>
+                Visited: {visitedCells.size} | Path: {pathCells.size}
+              </p>
+            </div>
+          )}
+
+          <div className="grid-wrapper">
+            {grid.length > 0 ? (
+              <div
+                className="grid"
+                style={{ gridTemplateColumns: `repeat(${gridSize}, 1fr)` }}
+              >
+                {grid.map((row, rowIndex) =>
+                  row.map((cell, colIndex) => (
+                    <div
+                      key={`${rowIndex}-${colIndex}`}
+                      className={getCellClass(cell, rowIndex, colIndex)}
+                      title={`(${rowIndex}, ${colIndex})`}
+                    />
+                  ))
+                )}
+              </div>
+            ) : (
+              <p className="placeholder">Click "Generate Grid" to start</p>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };
